@@ -9,7 +9,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.*;
 
 public class ClienteFlotaWS {
-
+			
 	// Sustituye esta clase por tu implementación.
 	// Deberías copiar y modificar ligeramente la clase cliente que has implementado por ejemplo 
 	// en la solución con sockets o RMI sin callbacks

@@ -5,16 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
-
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.xml.ws.*;
+import javax.swing.text.html.parser.Entity;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -25,19 +17,15 @@ import org.xml.sax.InputSource;
 
 
 public class GestorPartidas {
-
 	// URI del recurso que permite acceder al juego
 	final private String baseURI = "http://localhost:8080/com.flota.ws/servicios/partidas/";
 	Client cliente = null;
-	// Para guardar el target que obtendrá con la operación nuevaPartida y que le permitirá jugar la partida creada
+	// Para guardar el target que obtendra con la operacion nuevaPartida y que le permitira jugar la partida creada
 	private WebTarget targetPartida = null;
-
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
 	/**
 	 * Constructor de la clase
 	 * Crea el cliente
@@ -45,7 +33,6 @@ public class GestorPartidas {
 	public GestorPartidas()  {
         // POR IMPLEMENTAR
 	}
-
 	/**
 	 * Crea una nueva partida
 	 * Realiza una peticion POST a la URI {baseURI}/{numFilas}/{numColumnas}/{numBarcos}

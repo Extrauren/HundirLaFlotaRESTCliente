@@ -13,9 +13,9 @@ import javax.swing.*;
 
 public class ClienteFlotaWS {
 			
-	// Sustituye esta clase por tu implementación.
+	// Sustituye esta clase por tu implementacion.
 	// Deberías copiar y modificar ligeramente la clase cliente que has implementado por ejemplo 
-	// en la solución con sockets o RMI sin callbacks
+	// en la solucion con sockets o RMI sin callbacks
 	public static final int NUMFILAS=8, NUMCOLUMNAS=8, NUMBARCOS=6;
 	public static final int AGUA = -1, TOCADO = -2, HUNDIDO = -3;
 
@@ -43,16 +43,8 @@ public class ClienteFlotaWS {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				try{
-					gestor = new GestorPartidas("localhost","12345");				//Creamos el objeto de la clase Gestor
-					gestor.nuevaPartida(NUMFILAS, NUMCOLUMNAS, NUMBARCOS);
-				}catch (SocketException sex) {										//A partir de ahora todo es gestor.metodo
-					sex.printStackTrace();
-				}catch (UnknownHostException uex) {
-					uex.printStackTrace();
-				}catch (IOException iex) {
-					iex.printStackTrace();
-				}
+				gestor = new GestorPartidas();				//Creamos el objeto de la clase Gestor
+				gestor.nuevaPartida(NUMFILAS, NUMCOLUMNAS, NUMBARCOS);
 				guiTablero = new GuiTablero(NUMFILAS, NUMCOLUMNAS);
 				guiTablero.dibujaTablero();
 			}
@@ -187,34 +179,25 @@ public class ClienteFlotaWS {
 		/**
 		 * Muestra la solucion de la partida y marca la partida como finalizada
 		 */
-		public void muestraSolucion() {
-			// POR IMPLEMENTAR
-			try {
-				for(int i=0;i<NUMFILAS;i++){
-					for (int j = 0; j < NUMCOLUMNAS; j++) {
-						//veremos que nos devuelve prueba casilla 
-						//y en funcion de eso vamos haciendo
-						int valor = gestor.pruebaCasilla(i, j);
-						//segun el valor que nos devuelva pintaremos una cosa o otra
-						//solo me interesan 2 de los 3 valores
-						//el de tocado(que sera Rojo y el del agua que sera Azul
-						//corregir esto
-						if(valor==Partida.AGUA){
-							pintaBoton(buttons[i][j], Color.CYAN);
-						}else{
-							pintaBoton(buttons[i][j], Color.RED);
-						}
-						quedan = 0;
-						guiTablero.cambiaEstado("Game Over");
-						//Me falla aun esto, porque en teoria podre seguir clickando
-						//corregir para el futuro
-
+		public void muestraSolucion() throws IOException {
+			for(int i=0;i<NUMFILAS;i++){
+				for (int j = 0; j < NUMCOLUMNAS; j++) {
+					//veremos que nos devuelve prueba casilla 
+					//y en funcion de eso vamos haciendo
+					int valor = gestor.pruebaCasilla(i, j);
+					//segun el valor que nos devuelva pintaremos una cosa o otra
+					//solo me interesan 2 de los 3 valores
+					//el de tocado(que sera Rojo y el del agua que sera Azul
+					//corregir esto
+					if(valor==Partida.AGUA){
+						pintaBoton(buttons[i][j], Color.CYAN);
+					}else{
+						pintaBoton(buttons[i][j], Color.RED);
 					}
-
+					quedan = 0;
+					guiTablero.cambiaEstado("Game Over");
 				}
 
-			}catch (IOException e) {
-				e.printStackTrace();
 			}
 		} // end muestraSolucion
 
@@ -317,7 +300,12 @@ public class ClienteFlotaWS {
 				gestor.nuevaPartida(NUMFILAS, NUMCOLUMNAS, NUMBARCOS);
 				break;
 			case "Solucion"://deberia de pillar el try pero no lo pilla
-				guiTablero.muestraSolucion();
+				try {
+					guiTablero.muestraSolucion();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				break;
 			case "Salir":
 				System.exit(0);
@@ -361,7 +349,12 @@ public class ClienteFlotaWS {
 					quedan--;
 					guiTablero.pintaBarcoHundido(gestor.getBarco(estado));
 					if(quedan==0) { //Se llama cuando acaba la partida
-						guiTablero.muestraSolucion();
+						try {
+							guiTablero.muestraSolucion();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 				}
 				break;

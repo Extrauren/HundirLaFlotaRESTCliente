@@ -42,8 +42,9 @@ public class GestorPartidas {
 	 * Constructor de la clase
 	 * Crea el cliente
 	 */
-	public GestorPartidas()  {
+	public GestorPartidas() {
         // POR IMPLEMENTAR
+		cliente = ClientBuilder.newClient();			//Creamos el cliente solo porque partida no puedes inicializarla a algo en concreto ya que hay muchas 
 	}
 
 	/**
@@ -55,8 +56,7 @@ public class GestorPartidas {
 	 */
 	public void nuevaPartida(int numFilas, int numColumnas, int numBarcos)   {
 
-		Response response = cliente.target(baseURI).path(numFilas+"/"+numColumnas+"/"+numBarcos)
-				.request().post(Entity.xml(""));
+		Response response = cliente.target(baseURI).path("8/8/6").request().post(Entity.xml(""));
 
 		if (response.getStatus() != 201) throw new RuntimeException("Fallo al crear partida");
 		// Obtiene la informació sobre el URI del nuevo recurso partida de la cabecera 'Location' en la respuesta
@@ -73,6 +73,13 @@ public class GestorPartidas {
 	 */
 	public void borraPartida()   {		
         // POR IMPLEMENTAR
+		Response response = targetPartida.request().delete();
+		if(response.getStatus() == 404) {
+			response.close();
+			throw new NotFoundException();
+		}else {
+			response.close();
+		}
 	}
 
 
@@ -85,7 +92,15 @@ public class GestorPartidas {
 	 */
 	public int pruebaCasilla( int fila, int columna)   {
         // POR IMPLEMENTAR
-		return 0; // A MODIFICAR
+	
+		Response response = targetPartida.path("/casilla/").queryParam("fila", fila).queryParam("columna", columna).request().get();
+		if(response.getStatus() == 404) {
+			response.close();
+			throw new NotFoundException();
+		}
+		int resultado = response.readEntity(Integer.class);
+		response.close();
+		return resultado;
 	}
 
 	/**
@@ -94,8 +109,14 @@ public class GestorPartidas {
 	 * @return			cadena con informacion sobre el barco "fila#columna#orientacion#tamanyo"
 	 */
 	public String getBarco( int idBarco)   {
-        // POR IMPLEMENTAR
-		return null; // A MODIFICAR
+        Response response = targetPartida.path("/barco/" + String.valueOf(idBarco)).request().get();
+        if(response.getStatus()== 404) {
+        	response.close();
+        	throw new NotFoundException(); 
+        }
+        String resultado = response.readEntity(String.class);
+        response.close();
+		return resultado; // A MODIFICAR
 	}
 
 
@@ -105,8 +126,7 @@ public class GestorPartidas {
 	 * @return			vector de cadenas con la informacion de cada barco
 	 */
 	protected String[] getSolucion() {
-		String cadena = targetPartida.path("/solucion")
-				.request().get(String.class);
+		String cadena = targetPartida.path("/solucion").request().get(String.class);
 		try {
 			// Instancia el constructor de objetos de tipo Document
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
